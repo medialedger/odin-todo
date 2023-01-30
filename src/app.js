@@ -1,6 +1,63 @@
-import { getLists, addList, getCurrentList } from './lists.js';
-import { getTodos, addTodo } from './todos';
+import { initListData, getLists, addList, getActiveList, getActiveListId, setActiveListId } from './lists.js';
+import { initTodoData, getTodos, addTodo } from './todos';
 
+
+// initiate data
+const initAllData = () => {
+	if (!getLists()) {
+		initListData();
+	}
+	if (!getTodos()) {
+		initTodoData();
+	}
+	if (!getActiveListId()) {
+		setActiveListId();
+	}
+}
+
+// render lists
+const renderLists = () => {
+	const listContainer = document.querySelector('.lists');
+	const listData = getLists();
+	let listHtml = '';
+	listData.forEach(list => {
+		listHtml += `<li><button data-id="${list.id}" data-color="${list.color}">${list.name}</button></li>`;
+	})
+	listContainer.innerHTML = listHtml;
+	const allListButtons = document.querySelectorAll('.lists button');
+	allListButtons.forEach(btn => {
+		btn.addEventListener('click', (e) => {
+			const thisId = Number(e.target.dataset.id);
+			setActiveListId(thisId);
+			renderTodos(thisId);
+		});
+	})
+}
+
+// render active list
+const renderActiveList = () => {
+	const activeListId = getActiveListId();
+	const listHeader = document.querySelector('.todos h2');
+	listHeader.innerText = getActiveList(activeListId).name;
+}
+
+// render todos
+const renderTodos = () => {
+	const activeListId = Number(getActiveListId());
+	document.querySelector('.todos').dataset.listId = activeListId;
+	const todoContainer = document.querySelector('.todos ul');
+	let todoHtml = '';
+	const todoData = getTodos(activeListId);
+	if (todoData.length > 0) {
+		todoData.forEach(todo => {
+			todoHtml += `<li data-id="${todo.id}">${todo.title}</li>`;
+		})
+		todoContainer.innerHTML = todoHtml;
+	} else {
+		todoContainer.innerHTML = '<li>No ToDos yet!</li>';
+	}
+	renderActiveList(activeListId);
+}
 
 // list dialog button
 const btnListDialog = () => {
@@ -18,7 +75,7 @@ const btnTodoDialog = () => {
 	const todoContainer =document.querySelector('.todos');
 	btnTodoDialog.addEventListener('click', () => {
 		todoDialog.showModal();
-		document.querySelector('#dialog-add-todo .list-name').innerText = getCurrentList(Number(todoContainer.dataset.listId)).name;
+		document.querySelector('#dialog-add-todo .list-name').innerText = getActiveList(Number(todoContainer.dataset.listId)).name;
 	});
 }
 
@@ -39,48 +96,9 @@ const btnAddTodo = () => {
 	})
 }
 
-// render lists
-const renderLists = () => {
-	const listContainer = document.querySelector('.lists');
-	const listData = getLists();
-	let listHtml = '';
-	listData.forEach(list => {
-		listHtml += `<li><button data-id="${list.id}" data-color="${list.color}">${list.name}</button></li>`;
-	})
-	listContainer.innerHTML = listHtml;
-	const allListButtons = document.querySelectorAll('.lists button');
-	allListButtons.forEach(btn => {
-		btn.addEventListener('click', (e) => {
-			renderTodos(Number(e.target.dataset.id));
-		});
-	})
-}
-
-// render active list
-const renderActiveList = (listId = 1) => {
-	const listHeader = document.querySelector('.todos h2');
-	listHeader.innerText = getCurrentList(listId).name;
-}
-
-// render todos
-const renderTodos = (listId = 1) => {
-	document.querySelector('.todos').dataset.listId = listId;
-	const todoContainer = document.querySelector('.todos ul');
-	let todoHtml = '';
-	const todoData = getTodos(listId);
-	if (todoData.length > 0) {
-		todoData.forEach(todo => {
-			todoHtml += `<li data-id="${todo.id}">${todo.title}</li>`;
-		})
-		todoContainer.innerHTML = todoHtml;
-	} else {
-		todoContainer.innerHTML = '<li>No ToDos yet!</li>';
-	}
-	renderActiveList(listId);
-}
-
 // render all
 const renderAll = () => {
+	initAllData();
 	renderLists();
 	renderTodos();
 	renderActiveList();

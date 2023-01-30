@@ -1,27 +1,42 @@
-import { renderLists } from "./app";
+import { renderLists, renderTodos } from "./app";
+
+// init list data
+const initListData = () => {
+	const idArray = new Uint32Array(1);
+	const id = self.crypto.getRandomValues(idArray)[0];
+	const _firstList = [{
+		id,
+		name: 'My List',
+		color: '#000'
+	}];
+	saveLists(_firstList);
+}
 
 // get lists from local storage
 const getLists = () => {
-	const theLists = JSON.parse(localStorage.getItem('lists'));
-	if (theLists) {
-		return theLists;
+	const allLists = JSON.parse(localStorage.getItem('lists'));
+	return allLists;
+}
+
+// save active list ID
+const setActiveListId = (listId) => {
+	if (listId) {
+		localStorage.setItem('activeList', listId);
 	} else {
-		const _firstList = [{
-			id: 1,
-			name: 'My List',
-			color: '#f00'
-		}];
-		localStorage.setItem('lists', JSON.stringify(_firstList));
-		return _firstList;
+		const firstListId = getLists()[0].id;
+		localStorage.setItem('activeList', firstListId);
 	}
 }
 
-// get current list
-const getCurrentList = (listId = 1) => {
+// get Active list ID
+const getActiveListId = () => {
+	return localStorage.getItem('activeList');
+}
+
+// get active list
+const getActiveList = (listId) => {
 	const allLists = getLists();
-	if (allLists) {
-		return allLists.find(list => list.id === listId);
-	}
+	return allLists.find(list => list.id === Number(listId));
 }
 
 // save lists to local storage
@@ -33,12 +48,15 @@ const saveLists = (listData) => {
 const List = (name, color) => {
 	const saveList = () => {
 		let savedLists = getLists();
-		const maxListID = Math.max(...savedLists.map(list => list.id));
-		const newListId = maxListID + 1;
-		const newList = {id: newListId, name, color};
+		const idArray = new Uint32Array(1);
+		const id = self.crypto.getRandomValues(idArray)[0];
+		const newList = {id, name, color};
 		savedLists.push(newList);
 		saveLists(savedLists);
+		setActiveListId(id);
 		renderLists();
+		renderTodos();
+		
 	}
 	return {saveList};
 }
@@ -50,4 +68,4 @@ const addList = (formDataObject) => {
 }
 
 
-export { getLists, addList, getCurrentList };
+export { initListData, getLists, addList, getActiveList, getActiveListId, setActiveListId };

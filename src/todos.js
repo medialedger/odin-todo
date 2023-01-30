@@ -1,18 +1,18 @@
 import { renderTodos } from "./app";
 
+// init todo data
+const initTodoData = () => {
+	const _firstTodo = [];
+	saveTodos(_firstTodo);
+}
+
 // get todos from local
-const getTodos = (listId = 1) => {
+const getTodos = (listId) => {
 	const allTodos = JSON.parse(localStorage.getItem('todos'));
-	if (allTodos) {
-		if (listId === 'all') {
-			return allTodos;
-		} else {
-			return allTodos.filter(todo => todo.listId === listId);
-		}
+	if (!listId || listId === 'all') {
+		return allTodos;
 	} else {
-		const _firstTodo = [];
-		localStorage.setItem('todos', JSON.stringify(_firstTodo));
-		return null;
+		return allTodos.filter(todo => todo.listId === listId);
 	}
 }
 
@@ -26,13 +26,15 @@ const Todo = (listId, title, description, dueDate, dueTime, priority, notes) => 
 	const saveTodo = () => {
 		let savedTodos = getTodos('all');
 		if (savedTodos.length > 0) {
-			const maxTodoID = Math.max(...savedTodos.map(todo => todo.id));
-			const newTodoId = maxTodoID + 1;
-			const newTodo = {id: newTodoId, listId, title, description, dueDate, dueTime, priority, notes};
+			const idArray = new Uint32Array(1);
+			const id = self.crypto.getRandomValues(idArray)[0];
+			const newTodo = {id, listId, title, description, dueDate, dueTime, priority, notes};
 			savedTodos.push(newTodo);
 			saveTodos(savedTodos);
 		} else {
-			const firstTodo = [{id: 1, listId, title, description, dueDate, dueTime, priority, notes}];
+			const idArray = new Uint32Array(1);
+			const id = self.crypto.getRandomValues(idArray)[0];
+			const firstTodo = [{id, listId, title, description, dueDate, dueTime, priority, notes}];
 			saveTodos(firstTodo);
 		}
 		renderTodos(listId);
@@ -56,4 +58,4 @@ const addTodo = (formDataObject, listId) => {
 
 
 
-export { getTodos, addTodo };
+export { initTodoData, getTodos, addTodo };
