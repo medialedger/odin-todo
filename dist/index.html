@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>To-Do</title>
+</head>
+<body>
+	<h1>ToDo</h1>
+	<section>
+		<div>
+			<ul class="lists"></ul>
+			<button class="btn-add-list">Add List</button>
+		</div>
+		<div class="todos">
+			<h2></h2>
+			<ul></ul>
+			<button class="btn-add-todo">Add Todo</button>
+		</div>
+	</section>
+	<!-- new list dialog -->
+	<dialog id="dialog-add-list">
+		<h3>Add a list</h3>
+		<form method="dialog">
+			<label for="list-name">Name</label>
+			<input type="text" name="name" id="list-name" required>
+			<label for="list-color">Color</label>
+			<input type="color" name="color" id="list-color">
+			<button class="submit">add</button>
+		</form>
+	</dialog>
+	<!-- new todo dialog -->
+	<dialog id="dialog-add-todo">
+		<h3>Add a todo to <span class="list-name"></span></h3>
+		<form method="dialog">
+			<label for="todo-title">Title</label>
+			<input type="text" name="title" id="todo-title" required>
+			<label for="todo-description">Description</label>
+			<input type="text" name="description" id="todo-description">
+			<label for="todo-dueDate">Due Date</label>
+			<input type="date" name="dueDate" id="todo-dueDate">
+			<label for="todo-dueTime">Time</label>
+			<input type="time" name="dueTime" id="todo-dueTime">
+			<label for="todo-priority">Priority</label>
+			<select name="priority" id="todo-priority">
+				<option value="3">High</option>
+				<option value="1">Normal</option>
+				<option value="3">Low</option>
+			</select>
+			<label for="todo-notes">Notes</label>
+			<input type="text" name="notes" id="todo-notes">
+			<button class="submit">add</button>
+		</form>
+	</dialog>
+	<script src="main.js"></script>
+</body>
+</html>
