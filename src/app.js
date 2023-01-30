@@ -1,5 +1,5 @@
-import { initListData, getLists, addList, getActiveList, getActiveListId, setActiveListId } from './lists.js';
-import { initTodoData, getTodos, addTodo } from './todos';
+import { initListData, getLists, addList, getActiveList, getActiveListId, setActiveListId, deleteList } from './lists.js';
+import { initTodoData, getTodos, addTodo, getTodoCount } from './todos';
 
 
 // initiate data
@@ -21,7 +21,8 @@ const renderLists = () => {
 	const listData = getLists();
 	let listHtml = '';
 	listData.forEach(list => {
-		listHtml += `<li><button data-id="${list.id}" data-color="${list.color}">${list.name}</button></li>`;
+		const listCount = getTodoCount(Number(list.id));
+		listHtml += `<li><button data-id="${list.id}">${list.name} <span class="count">[${listCount}]</span></button></li>`;
 	})
 	listContainer.innerHTML = listHtml;
 	const allListButtons = document.querySelectorAll('.lists button');
@@ -34,17 +35,16 @@ const renderLists = () => {
 	})
 }
 
-// render active list
-const renderActiveList = () => {
-	const activeListId = getActiveListId();
-	const listHeader = document.querySelector('.todos h2');
-	listHeader.innerText = getActiveList(activeListId).name;
-}
-
 // render todos
 const renderTodos = () => {
 	const activeListId = Number(getActiveListId());
+	// container id
 	document.querySelector('.todos').dataset.listId = activeListId;
+	// header
+	const listHeader = document.querySelector('.todo-title');
+	const btnListDelete = document.querySelector('.todos .delete');
+	listHeader.innerText = getActiveList(activeListId).name;
+	// todos
 	const todoContainer = document.querySelector('.todos ul');
 	let todoHtml = '';
 	const todoData = getTodos(activeListId);
@@ -53,10 +53,11 @@ const renderTodos = () => {
 			todoHtml += `<li data-id="${todo.id}">${todo.title}</li>`;
 		})
 		todoContainer.innerHTML = todoHtml;
+		btnListDelete.disabled = true;
 	} else {
 		todoContainer.innerHTML = '<li>No ToDos yet!</li>';
+		btnListDelete.disabled = false;
 	}
-	renderActiveList(activeListId);
 }
 
 // list dialog button
@@ -79,7 +80,7 @@ const btnTodoDialog = () => {
 	});
 }
 
-// add list
+// btn add list
 const btnAddList = () => {
 	const formAddList = document.querySelector('#dialog-add-list form');
 	formAddList.addEventListener('submit', () => {
@@ -87,7 +88,13 @@ const btnAddList = () => {
 	})
 }
 
-// add todo
+// btn delete list
+const btnDeleteList = () => {
+	const btnListDelete = document.querySelector('.todos .delete');
+	btnListDelete.addEventListener('click', deleteList);
+}
+
+// btn add todo
 const btnAddTodo = () => {
 	const todoContainer = document.querySelector('.todos');
 	const formAddTodo = document.querySelector('#dialog-add-todo form');
@@ -101,11 +108,11 @@ const renderAll = () => {
 	initAllData();
 	renderLists();
 	renderTodos();
-	renderActiveList();
 	btnListDialog();
 	btnAddList();
 	btnTodoDialog();
 	btnAddTodo();
+	btnDeleteList();
 }
 
 

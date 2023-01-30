@@ -1,4 +1,5 @@
 import { renderLists, renderTodos } from "./app";
+import { getTodoCount } from "./todos";
 
 // init list data
 const initListData = () => {
@@ -67,5 +68,21 @@ const addList = (formDataObject) => {
 	newList.saveList();
 }
 
+// delete list
+const deleteList = () => {
+	let thisId = Number(getActiveListId());
+	if (getTodoCount(thisId) > 0) {
+		console.log('list not empty');
+	} else {
+		let savedLists = getLists();
+		const thisIndex = savedLists.findIndex(list => list.id ===thisId);
+		savedLists.splice(thisIndex, 1);
+		saveLists(savedLists);
+		renderLists();
+		setActiveListId();
+		renderTodos();
+	}
+}
 
-export { initListData, getLists, addList, getActiveList, getActiveListId, setActiveListId };
+
+export { initListData, getLists, addList, getActiveList, getActiveListId, setActiveListId, deleteList };

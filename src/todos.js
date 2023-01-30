@@ -56,6 +56,9 @@ const addTodo = (formDataObject, listId) => {
 	newTodo.saveTodo();
 }
 
+// get todo count per list
+const getTodoCount = (listId) => {
+	return getTodos(listId).length;
+}
 
-
-export { initTodoData, getTodos, addTodo };
+export { initTodoData, getTodos, addTodo, getTodoCount };
