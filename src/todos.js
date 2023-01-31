@@ -54,6 +54,16 @@ const getTodoCount = (listId) => {
 	return getTodos(listId).length;
 }
 
+// complete todo
+const completeTodo = (e) => {
+	const thisId = Number(e.target.closest('li').dataset.id);
+	let savedTodos = getTodos();
+	const thisTodo = savedTodos.findIndex(todo => todo.id === thisId);
+	savedTodos[thisTodo].completed = e.target.checked;
+	saveTodos(savedTodos);
+	renderTodos();
+}
+
 // delete todo
 const deleteTodo = (e) => {
 	const thisId = Number(e.target.closest('li').dataset.id);
@@ -65,4 +75,4 @@ const deleteTodo = (e) => {
 }
 
 
-export { initTodoData, getTodos, addTodo, getTodoCount, deleteTodo };
+export { initTodoData, getTodos, addTodo, getTodoCount, deleteTodo, completeTodo };

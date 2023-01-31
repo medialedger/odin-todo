@@ -1,5 +1,5 @@
 import { initListData, getLists, addList, getActiveList, getActiveListId, setActiveListId, deleteList } from './lists.js';
-import { initTodoData, getTodos, addTodo, getTodoCount, deleteTodo } from './todos';
+import { initTodoData, getTodos, addTodo, getTodoCount, deleteTodo, completeTodo } from './todos';
 
 
 // initiate data
@@ -50,7 +50,7 @@ const renderTodos = () => {
 	const todoData = getTodos(activeListId);
 	if (todoData.length > 0) {
 		todoData.forEach(todo => {
-			todoHtml += `<li data-id="${todo.id}" data-priority="${todo.priority}"><input type="checkbox" name="completed-${todo.id}" id="completed-${todo.id}"> <label for="completed-${todo.id}" class="todo-title">${todo.title}</label>`;
+			todoHtml += `<li data-id="${todo.id}" data-priority="${todo.priority}"><input type="checkbox" name="completed-${todo.id}" id="completed-${todo.id}" ${todo.completed ? 'checked' : ''}> <label for="completed-${todo.id}" class="todo-title">${todo.title}</label>`;
 			if (todo.dueDate) {
 				todoHtml += `<span class="todo-date">${todo.dueDate} ${todo.dueTime}</span>`;
 			}
@@ -69,6 +69,12 @@ const renderTodos = () => {
 		})
 		todoContainer.innerHTML = todoHtml;
 		btnListDelete.disabled = true;
+		// complete buttons
+		const btnsTodoComplete = document.querySelectorAll('.todos input[type="checkbox"]');
+		btnsTodoComplete.forEach(btn => {
+			btn.addEventListener('change', completeTodo);
+		})
+		// delete buttons
 		const btnsTodoDelete = document.querySelectorAll('.todos .delete');
 		btnsTodoDelete.forEach(btn => {
 			btn.addEventListener('click', deleteTodo);
