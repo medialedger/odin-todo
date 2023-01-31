@@ -1,7 +1,215 @@
+:root {
+	--color-fg-primary: hsla(215, 50%, 23%, 1);
+	--color-fg-secondary: hsla(203, 39%, 44%, 1);
+	--color-fg-highlight: hsla(355, 78%, 56%, 1);
+	--color-bg-page: hsla(182, 43%, 76%, 1);
+	--color-bg-lists: hsla(105, 55%, 96%, 1);
+	--color-bg-lists-active: hsla(105, 40%, 88%, 1);
+	--color-bg-todos: hsla(0, 0%, 100%, 1);
+	--color-accent: rgb(71, 197, 201);
+}
 html {
 	box-sizing: border-box;
-	font-family: sans-serif;
+	font-family: 'Source Sans Pro', sans-serif;
 }
 *, *::before, *::after {
 	box-sizing: inherit;
+}
+body {
+	background-color: var(--color-bg-page);
+	color: var(--color-fg-primary);
+	margin: 0;
+}
+h1 {
+	text-align: center;
+	margin: .5em;
+	font-size: 1.5em;
+}
+ul {
+	list-style-type: none;
+	margin: .5em 0 0;
+	padding: 0;
+}
+button {
+	font-family: inherit;
+	background-color: transparent;
+	border: none;
+	color: inherit;
+	font-size: 1em;
+	padding: 0;
+}
+button[disabled] {
+	opacity: .4;
+}
+/* app */
+.app {
+	width: 90%;
+	max-width: 40em;
+	margin: 0 auto;
+}
+/* lists */
+.lists {
+	background-color: var(--color-bg-lists);
+	padding: 1em;
+	border-radius: 1em 1em 0 0;
+}
+.lists h2 {
+	font-size: .8em;
+	margin: 0;
+	font-weight: normal;
+	color: var(--color-fg-secondary);
+	padding: 0 .625em;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.btn-add-list {
+	display: flex;
+	gap: .4em;
+	align-items: center;
+	padding: 0;
+}
+.btn-add-list svg {
+	display: block;
+	width: .8em;
+	height: auto;
+}
+.lists li button {
+	padding: 0.5em;
+	font-weight: 600;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	border-radius: .3em;
+}
+.lists .active button {
+	background-color: var(--color-bg-lists-active);
+}
+.lists li button .count {
+	font-size: .8em;
+	font-weight: normal;
+}
+/* todos */
+.todos {
+	background-color: var(--color-bg-todos);
+	padding: 1em;
+	border-radius: 0 0 1em 1em;
+	min-height: 12em;
+}
+.todos h2 {
+	font-size: 1.5em;
+	margin: 0;
+	font-weight: 600;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.todos h2 .btns {
+	display: flex;
+	gap: 1em;
+}
+.todos h2 button {
+	font-size: .53333333em;
+	display: flex;
+	gap: .4em;
+	align-items: center;
+	padding: 0;
+}
+.todos h2 button svg {
+	display: block;
+	width: .8em;
+	height: auto;
+}
+.todos ul {
+	display: grid;
+	gap: .5em;
+}
+.todos li {
+	display: flex;
+	gap: .6em;
+	align-items: flex-start;
+}
+.todo-date {
+	display: block;
+	font-size: .8em;
+	color: var(--color-fg-secondary);
+}
+.todo-info {
+	width: 100%;
+}
+.todos li .delete svg {
+	display: block;
+	width: .6em;
+	height: auto;
+}
+.todo-info details {
+	margin: .2em 0 0;
+}
+.todo-info summary {
+	font-size: .7em;
+}
+.todo-info details p {
+	font-size: .9em;
+	margin: .5em 0;
+}
+.todo-info details h3 {
+	font-size: .9em;
+	margin: .5em 0 0;
+}
+.todo-info details h3 + p {
+	margin-top: 0;
+}
+.todos input {
+	accent-color: var(--color-bg-lists-active);
+}
+
+/* dialogs */
+dialog {
+	width: 80%;
+	max-width: 32em;
+	border-radius: 1em;
+	border: none;
+	padding: 1em;
+	color: var(--color-fg-primary);
+}
+dialog::backdrop {
+	background: hsla(215, 50%, 23%, 0.8);
+}
+dialog form {
+	display: grid;
+	gap: 1em;
+}
+dialog form > div {
+	display: grid;
+	gap: .3em;
+}
+dialog h3 {
+	margin: 0 0 .6em;
+	font-size: 1.1em;
+}
+dialog label {
+	font-size: .9em;
+}
+dialog .submit {
+	background-color: var(--color-fg-secondary);
+	color: #fff;
+	padding: .8em 1.6em;
+	border-radius: .3em;
+}
+@media screen and (min-width: 768px) {
+	.app {
+		display: grid;
+		grid-template-columns: 2fr 3fr;
+	}
+	.lists {
+		border-radius: 1em 0 0 1em;
+	}
+	.todos {
+		background-color: var(--color-bg-todos);
+		padding: 1em;
+		border-radius: 0 1em 1em 0;
+		min-height: 20em;
+	}
+	
 }

@@ -17,19 +17,20 @@ const initAllData = () => {
 
 // render lists
 const renderLists = () => {
-	const listContainer = document.querySelector('.lists');
+	const listContainer = document.querySelector('.lists ul');
 	const listData = getLists();
 	let listHtml = '';
 	listData.forEach(list => {
 		const listCount = getTodoCount(Number(list.id));
-		listHtml += `<li data-id="${list.id}"><button>${list.name} <span class="count">[${listCount}]</span></button></li>`;
+		listHtml += `<li data-id="${list.id}" ${list.id === Number(getActiveListId()) ? 'class="active"' : ''}><button>${list.name} <span class="count">[${listCount}]</span></button></li>`;
 	})
 	listContainer.innerHTML = listHtml;
-	const allListButtons = document.querySelectorAll('.lists button');
+	const allListButtons = document.querySelectorAll('.lists li button');
 	allListButtons.forEach(btn => {
 		btn.addEventListener('click', (e) => {
 			const thisId = Number(e.target.closest('li').dataset.id);
 			setActiveListId(thisId);
+			renderLists();
 			renderTodos(thisId);
 		});
 	})
@@ -50,22 +51,21 @@ const renderTodos = () => {
 	const todoData = getTodos(activeListId);
 	if (todoData.length > 0) {
 		todoData.forEach(todo => {
-			todoHtml += `<li data-id="${todo.id}" data-priority="${todo.priority}"><input type="checkbox" name="completed-${todo.id}" id="completed-${todo.id}" ${todo.completed ? 'checked' : ''}> <label for="completed-${todo.id}" class="todo-title">${todo.title}</label>`;
+			todoHtml += `<li data-id="${todo.id}" data-priority="${todo.priority}"><input type="checkbox" name="completed-${todo.id}" id="completed-${todo.id}" ${todo.completed ? 'checked' : ''}><span class="todo-info"><label for="completed-${todo.id}" class="todo-title">${todo.title}</label>`;
 			if (todo.dueDate) {
 				todoHtml += `<span class="todo-date">${todo.dueDate} ${todo.dueTime}</span>`;
 			}
-			todoHtml += '<button class="delete"><svg width="7" height="8"><use href="#icon-trash"></use></svg></button>';
 			if (todo.description || todo.notes) {
 				todoHtml += `<details><summary>more info</summary>`;
 				if (todo.description) {
 					todoHtml += `<p>${todo.description}</p>`;
 				}
 				if (todo.notes) {
-					todoHtml += `<h4>Notes:</h4><p>${todo.notes}</p>`;
+					todoHtml += `<h3>Notes:</h3><p>${todo.notes}</p>`;
 				}
 				todoHtml += '</details>';
 			}
-			todoHtml += '</li>';
+			todoHtml += '</span><button class="delete"><svg width="7" height="8"><use href="#icon-trash"></use></svg></button></li>';
 		})
 		todoContainer.innerHTML = todoHtml;
 		btnListDelete.disabled = true;
@@ -75,7 +75,7 @@ const renderTodos = () => {
 			btn.addEventListener('change', completeTodo);
 		})
 		// delete buttons
-		const btnsTodoDelete = document.querySelectorAll('.todos .delete');
+		const btnsTodoDelete = document.querySelectorAll('.todos ul .delete');
 		btnsTodoDelete.forEach(btn => {
 			btn.addEventListener('click', deleteTodo);
 		})
@@ -117,7 +117,7 @@ const btnAddList = () => {
 
 // btn delete list
 const btnDeleteList = () => {
-	const btnListDelete = document.querySelector('.todos .delete');
+	const btnListDelete = document.querySelector('.todos h2 .delete');
 	btnListDelete.addEventListener('click', deleteList);
 }
 
@@ -127,6 +127,16 @@ const btnAddTodo = () => {
 	const formAddTodo = document.querySelector('#dialog-add-todo form');
 	formAddTodo.addEventListener('submit', () => {
 		addTodo(new FormData(formAddTodo), Number(todoContainer.dataset.listId));
+	})
+}
+
+// btn dialog close
+const btnsDialogClose = () => {
+	const btnsClose = document.querySelectorAll('dialog .close');
+	btnsClose.forEach(btn => {
+		btn.addEventListener('click', (e) => {
+			e.target.closest('dialog').close();
+		})
 	})
 }
 
@@ -140,6 +150,7 @@ const renderAll = () => {
 	btnTodoDialog();
 	btnAddTodo();
 	btnDeleteList();
+	btnsDialogClose();
 }
 
 
