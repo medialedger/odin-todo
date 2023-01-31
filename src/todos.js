@@ -22,21 +22,14 @@ const saveTodos = (todoData) => {
 }
 
 // todo factory
-const Todo = (listId, title, description, dueDate, dueTime, priority, notes) => {
+const Todo = (listId, title, description, dueDate, dueTime, priority, notes, completed) => {
 	const saveTodo = () => {
 		let savedTodos = getTodos('all');
-		if (savedTodos.length > 0) {
-			const idArray = new Uint32Array(1);
-			const id = self.crypto.getRandomValues(idArray)[0];
-			const newTodo = {id, listId, title, description, dueDate, dueTime, priority, notes};
-			savedTodos.push(newTodo);
-			saveTodos(savedTodos);
-		} else {
-			const idArray = new Uint32Array(1);
-			const id = self.crypto.getRandomValues(idArray)[0];
-			const firstTodo = [{id, listId, title, description, dueDate, dueTime, priority, notes}];
-			saveTodos(firstTodo);
-		}
+		const idArray = new Uint32Array(1);
+		const id = self.crypto.getRandomValues(idArray)[0];
+		const newTodo = {id, listId, title, description, dueDate, dueTime, priority, notes, completed: false};
+		savedTodos.push(newTodo);
+		saveTodos(savedTodos);
 		renderTodos(listId);
 	}
 	return {saveTodo};
@@ -61,4 +54,15 @@ const getTodoCount = (listId) => {
 	return getTodos(listId).length;
 }
 
-export { initTodoData, getTodos, addTodo, getTodoCount };
+// delete todo
+const deleteTodo = (e) => {
+	const thisId = Number(e.target.closest('li').dataset.id);
+	let savedTodos = getTodos();
+	const thisTodo = savedTodos.findIndex(todo => todo.id === thisId);
+	savedTodos.splice(thisTodo, 1);
+	saveTodos(savedTodos);
+	renderTodos();
+}
+
+
+export { initTodoData, getTodos, addTodo, getTodoCount, deleteTodo };

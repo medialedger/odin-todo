@@ -1,5 +1,5 @@
 import { initListData, getLists, addList, getActiveList, getActiveListId, setActiveListId, deleteList } from './lists.js';
-import { initTodoData, getTodos, addTodo, getTodoCount } from './todos';
+import { initTodoData, getTodos, addTodo, getTodoCount, deleteTodo } from './todos';
 
 
 // initiate data
@@ -22,13 +22,13 @@ const renderLists = () => {
 	let listHtml = '';
 	listData.forEach(list => {
 		const listCount = getTodoCount(Number(list.id));
-		listHtml += `<li><button data-id="${list.id}">${list.name} <span class="count">[${listCount}]</span></button></li>`;
+		listHtml += `<li data-id="${list.id}"><button>${list.name} <span class="count">[${listCount}]</span></button></li>`;
 	})
 	listContainer.innerHTML = listHtml;
 	const allListButtons = document.querySelectorAll('.lists button');
 	allListButtons.forEach(btn => {
 		btn.addEventListener('click', (e) => {
-			const thisId = Number(e.target.dataset.id);
+			const thisId = Number(e.target.closest('li').dataset.id);
 			setActiveListId(thisId);
 			renderTodos(thisId);
 		});
@@ -50,10 +50,29 @@ const renderTodos = () => {
 	const todoData = getTodos(activeListId);
 	if (todoData.length > 0) {
 		todoData.forEach(todo => {
-			todoHtml += `<li data-id="${todo.id}">${todo.title}</li>`;
+			todoHtml += `<li data-id="${todo.id}" data-priority="${todo.priority}"><input type="checkbox" name="completed-${todo.id}" id="completed-${todo.id}"> <label for="completed-${todo.id}" class="todo-title">${todo.title}</label>`;
+			if (todo.dueDate) {
+				todoHtml += `<span class="todo-date">${todo.dueDate} ${todo.dueTime}</span>`;
+			}
+			todoHtml += '<button class="delete"><svg width="7" height="8"><use href="#icon-trash"></use></svg></button>';
+			if (todo.description || todo.notes) {
+				todoHtml += `<details><summary>more info</summary>`;
+				if (todo.description) {
+					todoHtml += `<p>${todo.description}</p>`;
+				}
+				if (todo.notes) {
+					todoHtml += `<h4>Notes:</h4><p>${todo.notes}</p>`;
+				}
+				todoHtml += '</details>';
+			}
+			todoHtml += '</li>';
 		})
 		todoContainer.innerHTML = todoHtml;
 		btnListDelete.disabled = true;
+		const btnsTodoDelete = document.querySelectorAll('.todos .delete');
+		btnsTodoDelete.forEach(btn => {
+			btn.addEventListener('click', deleteTodo);
+		})
 	} else {
 		todoContainer.innerHTML = '<li>No ToDos yet!</li>';
 		btnListDelete.disabled = false;
@@ -65,6 +84,7 @@ const btnListDialog = () => {
 	const btnListDialog = document.querySelector('.btn-add-list');
 	const listDialog = document.getElementById('dialog-add-list');
 	btnListDialog.addEventListener('click', () => {
+		listDialog.querySelector('form').reset();
 		listDialog.showModal();
 	});
 }
@@ -75,6 +95,7 @@ const btnTodoDialog = () => {
 	const todoDialog = document.getElementById('dialog-add-todo');
 	const todoContainer =document.querySelector('.todos');
 	btnTodoDialog.addEventListener('click', () => {
+		todoDialog.querySelector('form').reset();
 		todoDialog.showModal();
 		document.querySelector('#dialog-add-todo .list-name').innerText = getActiveList(Number(todoContainer.dataset.listId)).name;
 	});

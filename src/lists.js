@@ -75,7 +75,7 @@ const deleteList = () => {
 		console.log('list not empty');
 	} else {
 		let savedLists = getLists();
-		const thisIndex = savedLists.findIndex(list => list.id ===thisId);
+		const thisIndex = savedLists.findIndex(list => list.id === thisId);
 		savedLists.splice(thisIndex, 1);
 		saveLists(savedLists);
 		renderLists();
